@@ -35,16 +35,14 @@ class ViewController: UIViewController {
 
     func initButton() {
         for button in cardButtons {
-            button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+            button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.0)
             button.layer.borderWidth = 0
-            button.layer.borderColor = UIColor.clear.cgColor
             button.layer.cornerRadius = 0
             button.setTitle("", for: .normal)
             var attributes: [NSAttributedStringKey: Any] = [:]
             attributes[.foregroundColor] = UIColor.clear.withAlphaComponent(1)
             let attributedString = NSAttributedString(string: "", attributes: attributes)
             button.setAttributedTitle(attributedString, for: .normal)
-
         }
     }
 
@@ -57,28 +55,35 @@ class ViewController: UIViewController {
         } else {
             deal3MoreCardButton.isEnabled = false
         }
-
-        for index in cardButtons.indices {
-            if game.cardsOnScreen.indices.contains(index) {
-                cardButtons[index].backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-                paintCard(button: cardButtons[index], card: game.cardsOnScreen[index])
-                if game.selectedCards.contains(game.cardsOnScreen[index]) {
-                    cardButtons[index].layer.borderWidth = 3.0
-                    cardButtons[index].layer.borderColor = UIColor.blue.cgColor
-                    cardButtons[index].layer.cornerRadius = 8.0
-                }
+        for item in cardButtons.indices {
+            let button = cardButtons[item]
+            if game.cardsOnScreen.indices.contains(item) {
+                paintCard(button: button, card: game.cardsOnScreen[item])
             } else {
-                cardButtons[index].backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
-                cardButtons[index].setTitle("", for: .normal)
+                button.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
             }
         }
     }
 
+
     func paintCard(button: UIButton, card: Card) {
+        if card.isMatched {
+            button.backgroundColor = UIColor.clear
+            return
+        }
+
+        if card.isSelected {
+            button.layer.borderWidth = 3.0
+            button.layer.borderColor = UIColor.blue.cgColor
+            button.layer.cornerRadius = 8.0
+        }
+
+        button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         var text = ""
         var color = UIColor.black
         var alpha: CGFloat = 0.0
         var attributes: [NSAttributedStringKey: Any] = [:]
+
         switch card.shape {
         case .diamond:
             text = "▲"
@@ -87,6 +92,7 @@ class ViewController: UIViewController {
         case .squiggle:
             text = "■"
         }
+
         switch card.number {
         case .one:
             break
@@ -95,6 +101,7 @@ class ViewController: UIViewController {
         case .three:
             text = text + text + text
         }
+
         switch card.color {
         case .green:
             color = UIColor.green
@@ -103,6 +110,7 @@ class ViewController: UIViewController {
         case .red:
             color = UIColor.red
         }
+
         switch card.shading {
         case .open:
             alpha = 0.5
@@ -114,7 +122,6 @@ class ViewController: UIViewController {
         }
 
         attributes[.foregroundColor] = color.withAlphaComponent(alpha)
-
         let attributedString = NSAttributedString(string: text + "\n", attributes: attributes)
         button.setAttributedTitle(attributedString, for: .normal)
     }
@@ -134,7 +141,5 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
 }
 

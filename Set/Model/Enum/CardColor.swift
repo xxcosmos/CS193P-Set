@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum CardColor {
+enum CardColor{
     case red
     case green
     case purple
