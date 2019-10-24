@@ -18,17 +18,50 @@ class Card: Hashable {
         return color.hashValue + shape.hashValue * 10 + number.hashValue * 100 + shading.hashValue * 1000
     }
 
-    var color: CardColor
-    var shape: CardShape
-    var number: CardNumber
-    var shading: CardShading
+    var color: Color
+    var shape: Shape
+    var number: Number
+    var shading: Shading
     var isSelected = false
     var isMatched = false
 
-    init(color: CardColor, shape: CardShape, number: CardNumber, shading: CardShading) {
+    init(color: Color, shape: Shape, number: Number, shading: Shading) {
         self.color = color
         self.shape = shape
         self.number = number
         self.shading = shading
     }
+
+    enum Color: String{
+        case red
+        case green
+        case purple
+
+        static let all = [red,green,purple]
+    }
+
+    enum Number: Int {
+        case one = 1
+        case two = 2
+        case three = 3
+
+        static let all = [one, two, three]
+    }
+
+    enum Shading: String {
+        case solid
+        case striped
+        case open
+
+        static let all = [solid, striped, open]
+    }
+
+    enum Shape:String {
+        case diamond
+        case squiggle
+        case oval
+
+        static let all = [diamond, squiggle, oval]
+    }
+
 }

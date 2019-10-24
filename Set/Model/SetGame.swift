@@ -26,7 +26,7 @@ class SetGame {
     }
 
     var canAddMoreCards: Bool {
-        return deck.count > 0 && cardsOnScreen.count - matchedCards.count < 22
+        return deck.count > 0
     }
 
     var score = 0
@@ -48,6 +48,11 @@ class SetGame {
         return colorNumber != 2 || shapeNumber != 2 || numberNumber != 2 || shadingNumber != 2
     }
 
+    func shuffle() {
+        for _ in 1...1000 {
+            cardsOnScreen.append(cardsOnScreen.remove(at: cardsOnScreen.randomIndex))
+        }
+    }
     // 点击有效卡片
     func cardStateChanged(card: Card) {
         if card.isMatched {
@@ -56,7 +61,6 @@ class SetGame {
         if card.isSelected {
             // 点击的是已选过的牌
             card.isSelected = false
-            score -= 1
             return
         }
         // 未选过
@@ -72,40 +76,39 @@ class SetGame {
             if isMatched {
                 for selectedCard in selectedCards {
                     selectedCard.isMatched = true
+                    let index = cardsOnScreen.index(of: selectedCard)!
+                    if !canAddMoreCards {
+                        cardsOnScreen.remove(at: index)
+                    }else{
+                        drawCard(isAdd: false, index: index)
+                    }
                 }
-                deal3moreCards()
+                
                 score += 3
-            }else {
-                score -= 5
             }
         }
     }
-
-    // 再发三张牌
-    func deal3moreCards() {
-        if canAddMoreCards {
-            if matchedCards.count > 2 {
-                for _ in 1...3 {
-                    let matchedCard = matchedCards[matchedCards.randomIndex]
-                    cardsOnScreen[cardsOnScreen.index(of: matchedCard)!] = deck.remove(at: deck.randomIndex)
-                }
-                return
-            }
-
-            for _ in 1...3 {
-                cardsOnScreen.append(deck.remove(at: deck.randomIndex))
-            }
-
+    
+    // 再发张牌
+    func drawCard(isAdd: Bool,index: Int) {
+        if !canAddMoreCards {return}
+        let newCard = deck.remove(at: deck.randomIndex)
+        if isAdd {
+            cardsOnScreen.append(newCard)
+        } else {
+            cardsOnScreen[index] = newCard
         }
+       
+        
     }
 
 
     init() {
         // 生成 81 张牌
-        for number in CardNumber.all {
-            for color in CardColor.all {
-                for shape in CardShape.all {
-                    for shading in CardShading.all {
+        for number in Card.Number.all {
+            for color in Card.Color.all {
+                for shape in Card.Shape.all {
+                    for shading in Card.Shading.all {
                         let card = Card(color: color, shape: shape, number: number, shading: shading)
                         deck.append(card)
                     }
@@ -113,8 +116,8 @@ class SetGame {
             }
         }
 
-        for _ in 1...4 {
-            deal3moreCards()
+        for _ in 1...12 {
+            drawCard(isAdd: true, index: 0)
         }
     }
 
